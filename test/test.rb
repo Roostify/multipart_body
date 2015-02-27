@@ -4,7 +4,7 @@ require 'tempfile'
 describe MultipartBody do
   describe 'MultipartBody.parse(str, boundary)' do
     before do
-      @boundary = '----multipart-boundary-307380'
+      @boundary = '------multipart-boundary-307380'
       @example_text = [
         @boundary,
         "\r\nContent-type: text/plain; charset=UTF-8\r\nContent-Disposition: form-data; name='n1'; filename='fn1'\r\n\r\nvalue\r\n------multipart-boundary-307380",

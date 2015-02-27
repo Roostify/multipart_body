@@ -19,7 +19,8 @@ class MultipartBody
   end
 
   def self.parse(str, boundary)
-    parts = str.split('--' + boundary).select{ |b| b != '--' }
+    parts = str.split(boundary).drop(1)
+    parts = parts.select{ |b| b != '--' }
     parts = parts.map { |p|
       headers, body = p.split(/\r\n\r\n/)
       headers = headers.split(/\r\n/)
