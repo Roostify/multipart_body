@@ -1,4 +1,6 @@
-class Part < Struct.new(:name, :body, :filename, :content_disposition, :content_type, :encoding)
+class Part
+  attr_accessor :name, :body, :filename, :content_disposition, :content_type, :encoding
+
   def initialize(*args)
     if args.flatten.first.is_a? Hash
       from_hash(args.flatten.first)
@@ -6,22 +8,22 @@ class Part < Struct.new(:name, :body, :filename, :content_disposition, :content_
       from_args(*args)
     end
   end
-  
+
   def from_hash(hash)
     hash.each_pair do |k, v|
       if k.to_s == 'body' && (v.is_a?(File) || v.is_a?(Tempfile))
-        self[k] = v.read
-        self['filename'] = File.basename(v.path)
+        self.send("#{k}=", v.read)
+        self.filename = File.basename(v.path)
       else
-        self[k] = v
+        self.send("#{k}=", v)
       end
     end
   end
-  
+
   def from_args(name, body, filename=nil)
     self.from_hash(:name => name, :body => body, :filename => filename)
   end
-  
+
   def header
     header = ""
     if content_disposition || name
@@ -34,7 +36,7 @@ class Part < Struct.new(:name, :body, :filename, :content_disposition, :content_
     header << "Content-Transfer-Encoding: #{encoding}\r\n" if encoding
     header
   end
-  
+
   # TODO: Implement encodings
   def encoded_body
     case encoding
@@ -44,7 +46,7 @@ class Part < Struct.new(:name, :body, :filename, :content_disposition, :content_
       raise "Encodings have not been implemented"
     end
   end
-  
+
   def to_s
     "#{header}\r\n#{encoded_body}"
   end

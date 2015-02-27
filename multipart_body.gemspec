@@ -12,5 +12,5 @@ Gem::Specification.new do |s|
 
   s.require_path = 'lib'
   s.files = %w(readme.md) + Dir.glob("lib/**/*")
-  s.test_files = Dir.glob("test/*")
+  s.add_development_dependency "minitest"
 end
