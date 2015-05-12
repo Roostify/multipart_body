@@ -8,21 +8,21 @@ describe MultipartBody do
       @example_text = [
         @boundary,
         "\r\nContent-type: text/plain; charset=UTF-8\r\nContent-Disposition: form-data; name='n1'; filename='fn1'\r\n\r\nvalue\r\n------multipart-boundary-307380",
-        "\r\nContent-type: text/plain; charset=UTF-8\r\nContent-Disposition: form-data; name='n2'; filename='fn2'\r\n\r\nvalue2\r\n------multipart-boundary-307380--",
+        "Content-type: text/plain; charset=UTF-8\nContent-Disposition: form-data; name='n2'; filename='fn2'\n\nvalue2\n------multipart-boundary-307380--",
       ].join('')
-
+      @mp = MultipartBody.parse(@example_text, @boundary)
+      #raise @mp.parts.first.to_s
     end
 
-    it 'return a new multipart when sent #parse' do
-      mp = MultipartBody.parse(@example_text, @boundary)
-      mp.parts.size.must_equal 2
-      mp.parts.first.name.must_equal 'n1'
-      mp.parts.first.filename.must_equal 'fn1'
-      mp.parts.first.body.must_equal "value\r\n"
-      mp.parts.last.name.must_equal 'n2'
-      mp.parts.last.filename.must_equal 'fn2'
-      mp.parts.last.body.must_equal "value2\r\n"
-    end
+    it{ @mp.parts.size.must_equal 2 }
+    it{ @mp.parts.first.name.must_equal 'n1' }
+    it{ @mp.parts.first.filename.must_equal 'fn1' }
+    it{
+      @mp.parts.first.body.must_equal "value"
+      @mp.parts.last.name.must_equal 'n2'
+      @mp.parts.last.filename.must_equal 'fn2'
+      @mp.parts.last.body.must_equal "value2"
+    }
   end
 
   describe "MultipartBody" do
@@ -106,11 +106,21 @@ describe MultipartBody do
 
   describe "a Part" do
     before do
-      @part = Part
       @file = Tempfile.new('file')
       @file.write('hello')
       @file.flush
       @file.open
+    end
+
+    describe 'self.parse(content)' do
+      it{
+        content = File.open(File.join(Dir.pwd, '/test/fixtures/part')).read
+        p = Part.parse(content)
+        p.content_type.must_equal 'text/plain; charset=UTF-8'
+        p.content_disposition.must_equal 'form-data; name="MP_STATUS_LOG"; filename="MP_STATUS_LOG"'
+        p.name.must_equal 'MP_STATUS_LOG'
+        p.filename.must_equal 'MP_STATUS_LOG'
+      }
     end
 
     it "assign values when sent #new with a hash" do

@@ -1,0 +1,13 @@
+
+Content-type: text/plain; charset=UTF-8
+Content-Disposition: form-data; name="MP_STATUS_LOG"; filename="MP_STATUS_LOG"
+
+Underwriting Checklist
+----------------------
+
+Message                                                Severity             Code
+--------------------------------------------------     ----------------     --------
+Field 02A-040 (Property State) is missing.             Error                118337
+
+The Property State is missing a character(s)           Error                118357
+(field 02A-040).

@@ -1,5 +1,5 @@
 class Part
-  attr_accessor :name, :body, :filename, :content_disposition, :content_type, :encoding
+  attr_accessor :headers, :name, :body, :filename, :content_disposition, :content_type, :encoding
 
   def initialize(*args)
     if args.flatten.first.is_a? Hash
@@ -7,6 +7,19 @@ class Part
     elsif args.length > 0
       from_args(*args)
     end
+  end
+
+  def self.parse(content)
+    lines = content.strip.split(/\r?\n/)
+    p = Part.new
+    p.headers = lines[0..1]
+    p.body = lines[2..-1].join("\n").strip
+    p.content_type = p.headers[0].split(':')[1].strip
+    p.content_disposition = p.headers[1].split(':')[1].strip
+    c_d_arry = p.content_disposition.split(';')
+    p.name = c_d_arry[1].split('=')[1].gsub(/["']/,'')
+    p.filename = c_d_arry[2].split('=')[1].gsub(/["']/,'')
+    return p
   end
 
   def from_hash(hash)
