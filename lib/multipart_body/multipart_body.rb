@@ -22,8 +22,8 @@ class MultipartBody
     parts = str.split(boundary).drop(1)
     parts = parts.select{ |b| b != '--' }
     parts = parts.map { |p|
-      headers, body = p.split(/\r\n\r\n/)
-      headers = headers.split(/\r\n/)
+      headers, body = p.split(/\r?\n\r?\n/)
+      headers = headers.split(/\r?\n/)
       headers = Hash[headers.map{ |h| h == '' ? nil : h.split(':') }.compact]
       type, name, filename = headers['Content-Disposition'].split(';').collect{ |cd|
         cd.include?('=') ? cd.split('=')[1].gsub(/["']/,'') : nil }
